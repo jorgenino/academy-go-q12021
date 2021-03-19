@@ -4,16 +4,18 @@ import (
 	"log"
 	"net/http"
 
-	"movies/controller"
-	"movies/infrastructure/router"
-	csvservice "movies/service/csv"
-	"movies/usecase"
+	"jobs/controller"
+	"jobs/infrastructure/router"
+	csvservice "jobs/service/csv"
+	httpservice "jobs/service/http"
+	"jobs/usecase"
 )
 
 func main() {
 
 	csvService := csvservice.New()
-	usecase := usecase.New(csvService)
+	httpService := httpservice.New()
+	usecase := usecase.New(csvService, httpService)
 	controller := controller.New(usecase)
 
 	router := router.New(controller)

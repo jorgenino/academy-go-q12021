@@ -1,14 +1,14 @@
 package router
 
 import (
-	"movies/controller"
+	"jobs/controller"
 
 	"github.com/gorilla/mux"
 )
 
 // Router struct
 type Router struct {
-	controller controller.NewMovieController
+	controller controller.NewJobController
 }
 
 // IRouter interface
@@ -17,14 +17,14 @@ type IRouter interface {
 }
 
 // New function
-func New(c controller.NewMovieController) *Router {
+func New(c controller.NewJobController) *Router {
 	return &Router{c}
 }
 
 // InitRouter function
 func (router *Router) InitRouter() *mux.Router {
 	r := mux.NewRouter().StrictSlash(true)
-	r.HandleFunc("/movies", router.controller.GetMovies).Methods("GET")
-
+	r.HandleFunc("/jobs", router.controller.GetJobs).Methods("GET")
+	r.HandleFunc("/api/jobs", router.controller.GetJobsFromAPI).Methods("GET")
 	return r
 }

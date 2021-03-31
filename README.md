@@ -1,5 +1,14 @@
 # Golang Bootcamp
 
+## How to run
+1. Run `go get`
+1. Run `go run main.go`
+
+### Available endpoints
+- 0.0.0.0/jobs
+- 0.0.0.0/api/jobs
+- 0.0.0.0/concurrency/jobs/{type}
+  -type can be: "even" or "odd"
 ## Introduction
 
 Thank you for participating in the Golang Bootcamp course!

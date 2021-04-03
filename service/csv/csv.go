@@ -16,26 +16,13 @@ type CsvService struct{}
 
 // NewCsvService interface
 type NewCsvService interface {
-	GetJobs(f *os.File) ([]model.Job, error)
-	Open(path string) (*os.File, error)
+	GetJobs() ([]model.Job, error)
 	StoreJobs(*[]model.ExtJob) error
 }
 
 // New function
 func New() *CsvService {
 	return &CsvService{}
-}
-
-// GetJobs function
-func (s *CsvService) GetJobs(f *os.File) ([]model.Job, error) {
-
-	jobs, err := Read(f)
-
-	if err != nil {
-		return nil, err
-	}
-
-	return jobs, nil
 }
 
 // Read function
@@ -78,15 +65,6 @@ func Read(f *os.File) ([]model.Job, error) {
 }
 
 // Open function
-func (s *CsvService) Open(path string) (*os.File, error) {
-	f, err := os.Open(path)
-	if err != nil {
-		return nil, errors.New("There was an error opening the file")
-	}
-	return f, nil
-}
-
-// Open function
 func Open(path string) (*os.File, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -103,12 +81,70 @@ func ReadAllLines(f *os.File) ([][]string, error) {
 	reader.FieldsPerRecord = -1
 	lines, err := reader.ReadAll()
 	if err != nil {
-		return nil, err
+		return nil, errors.New("There was an error reading from the file")
 	}
 
 	defer f.Close()
 
 	return lines, nil
+}
+
+// ReadConcurrently function
+func ReadConcurrently(f *os.File, typeNumber string, items int, itemsPerWorker int) ([]model.Job, error) {
+
+	reader := csv.NewReader(f)
+	reader.Comma = ','
+	reader.Comment = '#'
+	reader.FieldsPerRecord = -1
+
+	var jobs []model.Job = nil
+	for {
+		line, err := reader.Read()
+
+		if err == io.EOF {
+			break
+		}
+
+		if err != nil {
+			return nil, errors.New("There was an error reading from the file")
+		}
+
+		tempJob := model.Job{
+			Title:           line[1],
+			NormalizedTitle: line[2],
+		}
+
+		if line[0] != "" {
+			id, err := strconv.Atoi(line[0])
+			if err != nil {
+				return nil, errors.New("There was an error converting id to integer")
+			}
+
+			if id%2 != 0 && typeNumber == "even" || id%2 == 0 && typeNumber == "odd" {
+				continue
+			}
+
+			tempJob.ID = id
+		}
+
+		jobs = append(jobs, tempJob)
+		items--
+		if items == 0 {
+			break
+		}
+	}
+	defer f.Close()
+
+	return jobs, nil
+}
+
+// OpenAndWrite function
+func OpenAndWrite(path string) (*os.File, error) {
+	f, err := os.OpenFile(path, os.O_RDONLY|os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+	if err != nil {
+		return nil, errors.New("There was an error opening the file")
+	}
+	return f, nil
 }
 
 // AddLine function
@@ -126,13 +162,21 @@ func AddLine(f *os.File, lines [][]string, newJobs *[]model.ExtJob) error {
 	return nil
 }
 
-// OpenAndWrite function
-func OpenAndWrite(path string) (*os.File, error) {
-	f, err := os.OpenFile(path, os.O_RDONLY|os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
+// GetJobs function
+func (s *CsvService) GetJobs() ([]model.Job, error) {
+	f, err := Open(pathFile)
+
 	if err != nil {
-		return nil, errors.New("There was an error opening the file")
+		return nil, err
 	}
-	return f, nil
+
+	jobs, errorReading := Read(f)
+
+	if errorReading != nil {
+		return nil, errorReading
+	}
+
+	return jobs, nil
 }
 
 // StoreJobs function

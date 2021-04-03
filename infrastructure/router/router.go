@@ -1,9 +1,9 @@
 package router
 
 import (
-	"jobs/controller"
-
 	"github.com/gorilla/mux"
+	"jobs/controller"
+	"net/http"
 )
 
 // Router struct
@@ -23,8 +23,17 @@ func New(c controller.NewJobController) *Router {
 
 // InitRouter function
 func (router *Router) InitRouter() *mux.Router {
-	r := mux.NewRouter().StrictSlash(true)
-	r.HandleFunc("/jobs", router.controller.GetJobs).Methods("GET")
-	r.HandleFunc("/api/jobs", router.controller.GetJobsFromAPI).Methods("GET")
+	r := mux.NewRouter()
+	r.Methods(http.MethodGet).
+		Path("/concurrency/jobs/{type}").
+		Queries("items_per_worker", "{[0-9]+}").
+		Queries("items", "{[0-9]+}").
+		HandlerFunc(router.controller.GetJobsConcurrently)
+	r.Methods(http.MethodGet).
+		Path("/concurrency/jobs/{type}").
+		Queries("items", "{[0-9]+}").
+		HandlerFunc(router.controller.GetJobsConcurrently)
+	r.HandleFunc("/jobs", router.controller.GetJobs).Methods(http.MethodGet)
+	r.HandleFunc("/api/jobs", router.controller.GetJobsFromAPI).Methods(http.MethodGet)
 	return r
 }

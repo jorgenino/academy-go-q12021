@@ -5,76 +5,76 @@
 package mock
 
 import (
-        model "jobs/domain/model"
-        os "os"
-        reflect "reflect"
+	model "jobs/domain/model"
+	os "os"
+	reflect "reflect"
 
-        gomock "github.com/golang/mock/gomock"
+	gomock "github.com/golang/mock/gomock"
 )
 
 // MockNewCsvService is a mock of NewCsvService interface.
 type MockNewCsvService struct {
-        ctrl     *gomock.Controller
-        recorder *MockNewCsvServiceMockRecorder
+	ctrl     *gomock.Controller
+	recorder *MockNewCsvServiceMockRecorder
 }
 
 // MockNewCsvServiceMockRecorder is the mock recorder for MockNewCsvService.
 type MockNewCsvServiceMockRecorder struct {
-        mock *MockNewCsvService
+	mock *MockNewCsvService
 }
 
 // NewMockNewCsvService creates a new mock instance.
 func NewMockNewCsvService(ctrl *gomock.Controller) *MockNewCsvService {
-        mock := &MockNewCsvService{ctrl: ctrl}
-        mock.recorder = &MockNewCsvServiceMockRecorder{mock}
-        return mock
+	mock := &MockNewCsvService{ctrl: ctrl}
+	mock.recorder = &MockNewCsvServiceMockRecorder{mock}
+	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
 func (m *MockNewCsvService) EXPECT() *MockNewCsvServiceMockRecorder {
-        return m.recorder
+	return m.recorder
 }
 
 // GetJobs mocks base method.
 func (m *MockNewCsvService) GetJobs() ([]model.Job, error) {
-        m.ctrl.T.Helper()
-        ret := m.ctrl.Call(m, "GetJobs")
-        ret0, _ := ret[0].([]model.Job)
-        ret1, _ := ret[1].(error)
-        return ret0, ret1
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetJobs")
+	ret0, _ := ret[0].([]model.Job)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // GetJobs indicates an expected call of GetJobs.
 func (mr *MockNewCsvServiceMockRecorder) GetJobs() *gomock.Call {
-        mr.mock.ctrl.T.Helper()
-        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetJobs", reflect.TypeOf((*MockNewCsvService)(nil).GetJobs))
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetJobs", reflect.TypeOf((*MockNewCsvService)(nil).GetJobs))
 }
 
 // Open mocks base method.
 func (m *MockNewCsvService) Open(path string) (*os.File, error) {
-        m.ctrl.T.Helper()
-        ret := m.ctrl.Call(m, "Open", path)
-        ret0, _ := ret[0].(*os.File)
-        ret1, _ := ret[1].(error)
-        return ret0, ret1
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Open", path)
+	ret0, _ := ret[0].(*os.File)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // Open indicates an expected call of Open.
 func (mr *MockNewCsvServiceMockRecorder) Open(path interface{}) *gomock.Call {
-        mr.mock.ctrl.T.Helper()
-        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Open", reflect.TypeOf((*MockNewCsvService)(nil).Open), path)
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Open", reflect.TypeOf((*MockNewCsvService)(nil).Open), path)
 }
 
 // StoreJobs mocks base method.
 func (m *MockNewCsvService) StoreJobs(arg0 *[]model.ExtJob) error {
-        m.ctrl.T.Helper()
-        ret := m.ctrl.Call(m, "StoreJobs", arg0)
-        ret0, _ := ret[0].(error)
-        return ret0
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "StoreJobs", arg0)
+	ret0, _ := ret[0].(error)
+	return ret0
 }
 
 // StoreJobs indicates an expected call of StoreJobs.
 func (mr *MockNewCsvServiceMockRecorder) StoreJobs(arg0 interface{}) *gomock.Call {
-        mr.mock.ctrl.T.Helper()
-        return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreJobs", reflect.TypeOf((*MockNewCsvService)(nil).StoreJobs), arg0)
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "StoreJobs", reflect.TypeOf((*MockNewCsvService)(nil).StoreJobs), arg0)
 }

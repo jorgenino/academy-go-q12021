@@ -4,11 +4,11 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/golang/mock/gomock"
 	"jobs/domain/model"
 	csvservice "jobs/service/csv"
 	httpservice "jobs/service/http"
 	"jobs/service/mock"
-	"github.com/golang/mock/gomock"
 )
 
 func TestJobsUsecase_GetJobs(t *testing.T) {

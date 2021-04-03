@@ -1,11 +1,11 @@
 package usecase
 
 import (
-	"math"
-	"sync"
 	"jobs/domain/model"
 	csvservice "jobs/service/csv"
 	httpservice "jobs/service/http"
+	"math"
+	"sync"
 )
 
 const pathFile = "./csv/jobs.csv"
@@ -18,9 +18,9 @@ type JobUsecase struct {
 
 // NewJobUsecase interface
 type NewJobUsecase interface {
-	GetJobs() ([]model.Job, error) // <host>/jobs
-	GetJobsFromAPI() (*[]model.ExtJob, error) // <host>/api/jobs
-	GetJobsConcurrently(typeNumber string, items int, itemsPerWorker int) ([]model.Job, error) // <host>/concurrency/jobs/{type}
+	GetJobs() ([]model.Job, error)
+	GetJobsFromAPI() (*[]model.ExtJob, error)
+	GetJobsConcurrently(typeNumber string, items int, itemsPerWorker int) ([]model.Job, error)
 }
 
 // New function
@@ -65,13 +65,11 @@ func calculatePoolSize(items int, itemsPerWorker int, totalJobs int) int {
 
 // calculateMaxJobs function
 func calculateMaxJobs(totalJobs int) int {
-	var maxJobs int
-
-	if totalJobs%2 == 0 {
-		maxJobs = totalJobs / 2
-	} else {
-		maxJobs = totalJobs/2 + 1
+	maxJobs := totalJobs / 2
+	if totalJobs%2 != 0 {
+		maxJobs++
 	}
+	
 	return maxJobs
 }
 
@@ -129,16 +127,17 @@ func (us *JobUsecase) GetJobsConcurrently(typeNumber string, items int, itemsPer
 	var filteredJobs []model.Job = nil
 	bucket := make(map[int]int, totalJobs+1)
 	for elem := range values {
-		if typeNumber == "even" {
-			if elem%2 == 0 && bucket[elem] == 0 {
-				filteredJobs = append(filteredJobs, jobs[elem-1])
-				bucket[elem] = elem
-			}
-		} else if typeNumber == "odd" {
-			if elem % 2 != 0 && bucket[elem] == 0 {
-				filteredJobs = append(filteredJobs, jobs[elem-1])
-				bucket[elem] = elem 
-			}
+		switch typeNumber {
+			case "even":
+				if elem%2 == 0 && bucket[elem] == 0 {
+					filteredJobs = append(filteredJobs, jobs[elem-1])
+					bucket[elem] = elem
+				}
+			case "odd":
+				if elem%2 != 0 && bucket[elem] == 0 {
+					filteredJobs = append(filteredJobs, jobs[elem-1])
+					bucket[elem] = elem
+				}
 		}
 		if len(filteredJobs) >= items || len(filteredJobs) >= maxJobs {
 			break

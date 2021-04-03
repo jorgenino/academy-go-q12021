@@ -63,6 +63,7 @@ func Read(f *os.File) ([]model.Job, error) {
 
 	return jobs, nil
 }
+
 // Open function
 func Open(path string) (*os.File, error) {
 	f, err := os.Open(path)
@@ -80,7 +81,7 @@ func ReadAllLines(f *os.File) ([][]string, error) {
 	reader.FieldsPerRecord = -1
 	lines, err := reader.ReadAll()
 	if err != nil {
-		return nil, err
+		return nil, errors.New("There was an error reading from the file")
 	}
 
 	defer f.Close()
@@ -105,18 +106,18 @@ func ReadConcurrently(f *os.File, typeNumber string, items int, itemsPerWorker i
 		}
 
 		if err != nil {
-			return nil, err
+			return nil, errors.New("There was an error reading from the file")
 		}
 
 		tempJob := model.Job{
-			Title: line[1],
-			NormalizedTitle:  line[2],
+			Title:           line[1],
+			NormalizedTitle: line[2],
 		}
 
 		if line[0] != "" {
 			id, err := strconv.Atoi(line[0])
 			if err != nil {
-				return nil, err
+				return nil, errors.New("There was an error converting id to integer")
 			}
 
 			if id%2 != 0 && typeNumber == "even" || id%2 == 0 && typeNumber == "odd" {
@@ -145,7 +146,6 @@ func OpenAndWrite(path string) (*os.File, error) {
 	}
 	return f, nil
 }
-
 
 // AddLine function
 func AddLine(f *os.File, lines [][]string, newJobs *[]model.ExtJob) error {

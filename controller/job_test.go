@@ -1,11 +1,11 @@
 package controller
 
 import (
-	"net/http"
-	"net/http/httptest"
 	"jobs/domain/model"
 	"jobs/usecase"
 	usecasemock "jobs/usecase/mock"
+	"net/http"
+	"net/http/httptest"
 	"reflect"
 	"testing"
 

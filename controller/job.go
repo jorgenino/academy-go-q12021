@@ -2,11 +2,11 @@ package controller
 
 import (
 	"encoding/json"
-	"net/http"
 	"fmt"
-	"jobs/usecase"
-	"strconv"
 	"github.com/gorilla/mux"
+	"jobs/usecase"
+	"net/http"
+	"strconv"
 )
 
 // JobController struct

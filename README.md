@@ -1,14 +1,21 @@
 # Golang Bootcamp
 
+## Description
+This project was made for the Golang Bootcamp as Wizeline. What it does is that you can retrieve jobs from the ones stores in the database (csv file used) in a concurrent or listing manner, and retrieve jobs from an external api.
+
 ## How to run
-1. Run `go get`
-1. Run `go run main.go`
+1. Run `go get -u -v -f all` which will install all the dependencies.
+1. Run `go run main.go` which runs the project locally.
 
 ### Available endpoints
 - 0.0.0.0/jobs
+  - Queries the jobs stored in the database (CSV File).
 - 0.0.0.0/api/jobs
+  - Queries jobs from an external API.
 - 0.0.0.0/concurrency/jobs/{type}
-  -type can be: "even" or "odd"
+  - Queries jobs concurrently from the database (CSV File).
+  - type can be: "even" or "odd".
+
 ## Introduction
 
 Thank you for participating in the Golang Bootcamp course!

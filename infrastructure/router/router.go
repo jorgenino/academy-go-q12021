@@ -1,9 +1,9 @@
 package router
 
 import (
+	"github.com/gorilla/mux"
 	"jobs/controller"
 	"net/http"
-	"github.com/gorilla/mux"
 )
 
 // Router struct
@@ -33,7 +33,7 @@ func (router *Router) InitRouter() *mux.Router {
 		Path("/concurrency/jobs/{type}").
 		Queries("items", "{[0-9]+}").
 		HandlerFunc(router.controller.GetJobsConcurrently)
-	r.HandleFunc("/jobs", router.controller.GetJobs).Methods("GET")
-	r.HandleFunc("/api/jobs", router.controller.GetJobsFromAPI).Methods("GET")
+	r.HandleFunc("/jobs", router.controller.GetJobs).Methods(http.MethodGet)
+	r.HandleFunc("/api/jobs", router.controller.GetJobsFromAPI).Methods(http.MethodGet)
 	return r
 }

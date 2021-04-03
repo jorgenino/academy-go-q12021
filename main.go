@@ -13,8 +13,9 @@ import (
 
 func main() {
 
+	const apiUrl = "http://api.dataatwork.org/v1/jobs"
 	csvService := csvservice.New()
-	httpService := httpservice.New()
+	httpService := httpservice.New(apiUrl)
 	usecase := usecase.New(csvService, httpService)
 	controller := controller.New(usecase)
 

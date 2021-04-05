@@ -3,7 +3,6 @@ package controller
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"jobs/usecase"
 	"net/http"
 	"strconv"
@@ -22,11 +21,13 @@ type NewJobController interface {
 }
 
 // New function
+// Initiates the job controller
 func New(juc usecase.NewJobUsecase) *JobController {
 	return &JobController{juc}
 }
 
 // GetJobs function
+// Controller function to obtain the jobs from the CSV
 func (jc *JobController) GetJobs(w http.ResponseWriter, r *http.Request) {
 	jobs, err := jc.useCase.GetJobs()
 	w.Header().Set("Content-Type", "application/json")
@@ -41,6 +42,7 @@ func (jc *JobController) GetJobs(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetJobsFromAPI function
+// Controller function to get jobs from the API
 func (jc *JobController) GetJobsFromAPI(
 	w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -56,9 +58,9 @@ func (jc *JobController) GetJobsFromAPI(
 }
 
 // GetJobsConcurrently function
+// Controller function to obtain jobs concurrently from the CSV file
 func (jbc *JobController) GetJobsConcurrently(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	typeNumber := vars["type"]
+	typeNumber := r.FormValue("type")
 	if typeNumber == "even" || typeNumber == "odd" {
 		itemsS := r.FormValue("items")
 		itemsPerWorkerS := r.FormValue("items_per_worker")

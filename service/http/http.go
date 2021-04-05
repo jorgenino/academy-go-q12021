@@ -8,6 +8,7 @@ import (
 	"jobs/domain/model"
 )
 
+// httpService struct
 type httpService struct{
 	apiUrl string
 }
@@ -18,11 +19,13 @@ type NewHTTPService interface {
 }
 
 // New function
+// Initiates the httpService
 func New(apiUrl string) *httpService {
 	return &httpService{apiUrl: apiUrl}
 }
 
 // GetJobs function
+// Function that perform a request to obtain jobs from an external API
 func (h *httpService) GetJobs() ([]model.ExtJob, error) {
 	client := &http.Client{}
 	req, err := http.NewRequest(http.MethodGet, h.apiUrl, nil)

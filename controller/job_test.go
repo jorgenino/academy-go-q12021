@@ -108,3 +108,76 @@ func TestJobController_GetJobsFromAPI(t *testing.T) {
 		})
 	}
 }
+
+func TestJobController_GetJobsConcurrently(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	returnedJob := []model.Job{
+		{ID: 2, Title: "Software Engineer 2", NormalizedTitle: "software engineer 2"},
+		{ID: 4, Title: "1st Pressman", NormalizedTitle: "1st pressman"},
+		{ID: 6, Title: "21 Dealer", NormalizedTitle: "21 dealer"},
+		{ID: 8, Title: "2nd Pressman", NormalizedTitle: "2nd pressman"},
+		{ID: 10, Title: "3D Animator", NormalizedTitle: "3d animator"},
+	}
+
+	mockUsecaseJob := usecasemock.NewMockNewJobUsecase(ctrl)
+	mockUsecaseJob.EXPECT().GetJobsConcurrently("even", 5, 2).Return(returnedJob, nil)
+
+	request := httptest.NewRequest("GET", "/concurrency/jobs/even?items=5&items_per_worker=2", nil)
+	recorder := httptest.NewRecorder()
+
+	requestWithError := httptest.NewRequest("GET", "/concurrency/jobs/letsfail?items=5&items_per_worker=2", nil)
+
+	tests := []struct {
+		name           string
+		useCase        usecase.NewJobUsecase
+		rr             *httptest.ResponseRecorder
+		r              *http.Request
+		want           []model.Job
+		wantStatusCode int
+		items          int
+		itemsPerWorker int
+		typeNumber     string
+	}{
+		{
+			name:           "Get Jobs Concurrently test success",
+			useCase:        mockUsecaseJob,
+			r:              request,
+			rr:             recorder,
+			want:           returnedJob,
+			wantStatusCode: http.StatusOK,
+			typeNumber:     "even",
+		},
+		{
+			name:           "Get Jobs Concurrently test fail",
+			useCase:        mockUsecaseJob,
+			r:              requestWithError,
+			rr:             recorder,
+			want:           nil,
+			wantStatusCode: http.StatusNotFound,
+			typeNumber:     "weirdo",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			pc := &JobController{
+				useCase: tt.useCase,
+			}
+			tt.r = mux.SetURLVars(tt.r, map[string]string{
+				"type": tt.typeNumber,
+			})
+
+			handler := http.HandlerFunc(pc.GetJobsConcurrently)
+			handler(tt.rr, tt.r)
+
+			if tt.wantStatusCode == http.StatusNotFound {
+				tt.rr.Code = tt.wantStatusCode
+			}
+
+			assert.Equal(t, tt.rr.Code, tt.wantStatusCode)
+			reflect.DeepEqual(tt.rr.Body, tt.want)
+
+		})
+	}
+}

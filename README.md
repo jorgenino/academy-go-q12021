@@ -12,9 +12,12 @@ This project was made for the Golang Bootcamp as Wizeline. What it does is that 
   - Queries the jobs stored in the database (CSV File).
 - 0.0.0.0/api/jobs
   - Queries jobs from an external API.
-- 0.0.0.0/concurrency/jobs/{type}
+- 0.0.0.0/concurrency/jobs
   - Queries jobs concurrently from the database (CSV File).
-  - type can be: "even" or "odd".
+  - Uses the next query params:
+    - type: can be "even" or "odd".
+    - items: Is an Int and is the amount of valid items you need to display as a response
+    - items_per_workers: Is an Int and is the amount of valid items the worker should append to the response
 
 ## Introduction
 

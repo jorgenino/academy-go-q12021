@@ -24,16 +24,19 @@ type NewJobUsecase interface {
 }
 
 // New function
+// Initiates the jobs usecase object
 func New(s csvservice.NewCsvService, h httpservice.NewHTTPService) *JobUsecase {
 	return &JobUsecase{s, h}
 }
 
 // GetJobs function
+// Function that uses the CSV service to retrieve the jobs from the CSV file
 func (us *JobUsecase) GetJobs() ([]model.Job, error) {
 	return us.csvService.GetJobs()
 }
 
 // GetJobsFromAPI function
+// Function that gathers jobs from an external API
 func (us *JobUsecase) GetJobsFromAPI() (*[]model.ExtJob, error) {
 	newJobs, err := us.httpService.GetJobs()
 	if err != nil {
@@ -47,6 +50,7 @@ func (us *JobUsecase) GetJobsFromAPI() (*[]model.ExtJob, error) {
 }
 
 // calculatePoolSize function
+// Function that calculates the pool size to obtain jobs concurrently from the CSV file
 func calculatePoolSize(items int, itemsPerWorker int, totalJobs int) int {
 	var poolSize int
 	if items%itemsPerWorker != 0 {
@@ -64,6 +68,7 @@ func calculatePoolSize(items int, itemsPerWorker int, totalJobs int) int {
 }
 
 // calculateMaxJobs function
+// Function to calculate the max number of jobs to obtain concurrently from the CSV file
 func calculateMaxJobs(totalJobs int) int {
 	maxJobs := totalJobs / 2
 	if totalJobs%2 != 0 {
@@ -74,6 +79,7 @@ func calculateMaxJobs(totalJobs int) int {
 }
 
 // GetJobsConcurrently function
+// Function that obtains jobs concurrently from the CSV file
 func (us *JobUsecase) GetJobsConcurrently(typeNumber string, items int, itemsPerWorker int) ([]model.Job, error) {
 	jobs, err := us.csvService.GetJobs()
 	if err != nil {

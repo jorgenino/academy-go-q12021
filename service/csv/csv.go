@@ -21,11 +21,13 @@ type NewCsvService interface {
 }
 
 // New function
+// Function that initiates the CSV service
 func New() *CsvService {
 	return &CsvService{}
 }
 
 // Read function
+// Function that reads from the CSV file
 func Read(f *os.File) ([]model.Job, error) {
 
 	reader := csv.NewReader(f)
@@ -65,6 +67,7 @@ func Read(f *os.File) ([]model.Job, error) {
 }
 
 // Open function
+// Function that opens the CSV file if found
 func Open(path string) (*os.File, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -74,6 +77,7 @@ func Open(path string) (*os.File, error) {
 }
 
 // ReadAllLines function
+// Function to read all the lines from the CSV file
 func ReadAllLines(f *os.File) ([][]string, error) {
 	reader := csv.NewReader(f)
 	reader.Comma = ','
@@ -90,6 +94,7 @@ func ReadAllLines(f *os.File) ([][]string, error) {
 }
 
 // ReadConcurrently function
+// Function to read concurrently from the CSV file
 func ReadConcurrently(f *os.File, typeNumber string, items int, itemsPerWorker int) ([]model.Job, error) {
 
 	reader := csv.NewReader(f)
@@ -139,6 +144,7 @@ func ReadConcurrently(f *os.File, typeNumber string, items int, itemsPerWorker i
 }
 
 // OpenAndWrite function
+// Function to open the CSV file in write mode
 func OpenAndWrite(path string) (*os.File, error) {
 	f, err := os.OpenFile(path, os.O_RDONLY|os.O_WRONLY|os.O_CREATE|os.O_APPEND, 0644)
 	if err != nil {
@@ -148,6 +154,7 @@ func OpenAndWrite(path string) (*os.File, error) {
 }
 
 // AddLine function
+// Function to add lines to the CSV file
 func AddLine(f *os.File, lines [][]string, newJobs *[]model.ExtJob) error {
 
 	linesNumber := len(lines) + 1
@@ -163,6 +170,7 @@ func AddLine(f *os.File, lines [][]string, newJobs *[]model.ExtJob) error {
 }
 
 // GetJobs function
+// Function to retrieve jobs from the CSV file
 func (s *CsvService) GetJobs() ([]model.Job, error) {
 	f, err := Open(pathFile)
 
@@ -180,10 +188,11 @@ func (s *CsvService) GetJobs() ([]model.Job, error) {
 }
 
 // StoreJobs function
+// Function that stores jobs in the CSV file
 func (s *CsvService) StoreJobs(newJobs *[]model.ExtJob) error {
-	f, _ := Open(pathFile) //Read only
+	f, _ := Open(pathFile)
 	lines, _ := ReadAllLines(f)
-	fileOpenAndWrite, _ := OpenAndWrite(pathFile) // Write
+	fileOpenAndWrite, _ := OpenAndWrite(pathFile)
 
 	err := AddLine(fileOpenAndWrite, lines, newJobs)
 	if err != nil {
